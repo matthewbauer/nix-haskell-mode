@@ -5,7 +5,7 @@
 ;; Author: Matthew Bauer <mjbauer95@gmail.com>
 ;; Homepage: https://github.com/matthewbauer/nix-haskell
 ;; Keywords: nix, haskell, languages, processes
-;; Version: 0.0.1
+;; Version: 0.0.2
 ;; Package-Requires: ((emacs "25") (haskell-mode "16.0") (flycheck "30") (nix-mode "1.3.0"))
 
 ;; This file is NOT part of GNU Emacs.
