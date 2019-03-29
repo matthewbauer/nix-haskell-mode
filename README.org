@@ -1,0 +1,13 @@
+* nix-haskell-mode
+
+nix-haskell-mode is an easy way to get Haskell projects set up in
+Emacs. It uses haskell-mode’s interactive-haskell-mode to provide
+integration with Emacs. Nix is used to pull in dependencies of each
+Cabal file.
+
+To use with use-package, just add this to your configuration:
+
+#+BEGIN_SRC emacs-lisp
+(use-package nix-haskell-mode
+  :hook (haskell-mode . nix-haskell-mode))
+#+END_SRC

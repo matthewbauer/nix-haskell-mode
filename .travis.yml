@@ -1,0 +1,14 @@
+language: nix
+
+script:
+  - nix-build
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+    - os: osx
+
+cache:
+  directories:
+    - /nix/store
