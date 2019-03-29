@@ -7,8 +7,8 @@ let
     nix-mode
   ]);
 in stdenvNoCC.mkDerivation {
-  name = "nix-mode";
+  name = "nix-haskell-mode";
   src = ./.;
-  nativeBuildInputs = [ emacs texinfo ];
+  nativeBuildInputs = [ emacs ];
   makeFlags = [ "PREFIX=$(out)" ];
 }

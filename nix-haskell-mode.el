@@ -362,7 +362,10 @@ CALLBACK called once the package-db is determined."
 	 :noquery t
 	 :sentinel (apply-partially 'nix-haskell-instantiate-sentinel
 				    cabal-file stderr)
-	 :stderr stderr)))))
+	 :stderr stderr)
+
+	;; Don’t let hooks wait for make-process.
+	t))))
 
 (defun nix-haskell-interactive (buf out drv)
   "Setup interactive buffers for nix-haskell.
