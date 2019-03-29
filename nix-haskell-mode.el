@@ -81,12 +81,12 @@
   :group 'nix-haskell)
 
 (defcustom nix-haskell-interactive t
-  "Whether to enable interactive-haskell-mode."
+  "Whether to enable variable ‘interactive-haskell-mode’."
   :type 'boolean
   :group 'nix-haskell)
 
 (defcustom nix-haskell-interactive-auto t
-  "Whether to start an interactive-haskell-mode session automatically."
+  "Whether to start an variable ‘interactive-haskell-mode’ session automatically."
   :type 'boolean
   :group 'nix-haskell)
 
@@ -201,7 +201,7 @@ EVENT the event that was fired."
 
 (defun nix-haskell-instantiate-sentinel (prop err proc event)
   "Make a nix-haskell process.
-PROP the prop name of nix-haskell-running-processes.
+PROP the prop name of ‘nix-haskell-running-processes’.
 ERR the error buffer.
 PROC the process that has been run.
 EVENT the event that was fired."
@@ -445,7 +445,7 @@ DRV derivation file."
     cabal-file))
 
 (defun nix-haskell-restart ()
-  "Restart nix-haskell-mode process."
+  "Restart variable ‘nix-haskell-mode’ process."
   (interactive)
   (setq nix-haskell-package-db-cache
 	(lax-plist-put nix-haskell-package-db-cache
@@ -487,3 +487,6 @@ DRV derivation file."
 
 (provide 'nix-haskell-mode)
 ;;; nix-haskell-mode.el ends here
+
+					; LocalWords:  el flycheck async Keymap
+					; LocalWords:  dbs
