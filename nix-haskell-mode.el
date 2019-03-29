@@ -1,4 +1,4 @@
-;;; nix-haskell-mode.el -- haskell-mode integrations for Nix -*- lexical-binding: t -*-
+;;; nix-haskell-mode.el --- haskell-mode integrations for Nix -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2019 Matthew Bauer
 
