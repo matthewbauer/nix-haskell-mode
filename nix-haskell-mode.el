@@ -269,6 +269,9 @@ EVENT the event that was fired."
       (setq nix-file (expand-file-name "default.nix" root)))
     (when (and nix-file (file-exists-p nix-file)) nix-file)))
 
+(defvar-local nix-haskell-instantiate-stderr nil)
+(defvar-local nix-haskell-store-stderr nil)
+
 (defun nix-haskell-get-pkg-db (callback)
   "Get a package-db async.
 CALLBACK called once the package-db is determined."
@@ -284,12 +287,13 @@ CALLBACK called once the package-db is determined."
               (> (time-to-seconds
                   (nth 5 (file-attributes cabal-file)))
                  (car cache)))
+      (setq nix-haskell-instantiate-stderr
+	    (generate-new-buffer
+	     (format "*nix-haskell-instantiate-stderr<%s>*"
+		     package-name)))
       (let* ((data (lax-plist-get nix-haskell-running-processes cabal-file))
 	     (stdout (generate-new-buffer
 		      (format "*nix-haskell-instantiate-stdout<%s>*"
-			      package-name)))
-	     (stderr (generate-new-buffer
-		      (format "*nix-haskell-instantiate-stderr<%s>*"
 			      package-name)))
 	     (command
 	      (list nix-instantiate-executable
@@ -361,8 +365,8 @@ CALLBACK called once the package-db is determined."
 	 :command command
 	 :noquery t
 	 :sentinel (apply-partially 'nix-haskell-instantiate-sentinel
-				    cabal-file stderr)
-	 :stderr stderr)
+				    cabal-file nix-haskell-instantiate-stderr)
+	 :stderr nix-haskell-instantiate-stderr)
 
 	;; Don’t let hooks wait for make-process.
 	t))))
@@ -427,7 +431,9 @@ DRV derivation file."
 	    (flycheck-mode 1))))
     (let ((stderr (generate-new-buffer
 		   (format "*nix-haskell-store<%s>*" (nix-haskell-package-name)))))
-      (with-current-buffer buf (setq nix-haskell-status "+"))
+      (with-current-buffer buf
+	(setq nix-haskell-status "+")
+	(setq nix-haskell-store-stderr stderr))
       (make-process
        :name (format "*nix-haskell-store<%s>*" (nix-haskell-package-name))
        :buffer nil
@@ -456,6 +462,16 @@ DRV derivation file."
   (nix-haskell-get-pkg-db (apply-partially 'nix-haskell-interactive
 					   (current-buffer))))
 
+(defun nix-haskell-show-buffer ()
+  "Show buffer used in nix-haskell."
+  (interactive)
+  (cond
+   (nix-haskell-instantiate-stderr
+    (display-buffer nix-haskell-instantiate-stderr))
+   (nix-haskell-store-stderr
+    (display-buffer nix-haskell-store-stderr))
+   (t (error "No nix-haskell buffer is active"))))
+
 (defvar nix-haskell-mode-map
   (let ((map (make-sparse-keymap)))
     map)
@@ -465,7 +481,8 @@ DRV derivation file."
   '("nix-haskell-mode"
     ["Clear cache" 'nix-haskell-clear-cache t]
     ["Restart" 'nix-haskell-restart t]
-    ["Configure..." (lambda () (interactive) (customize-group 'nix-haskell)) t]))
+    ["Configure..." (lambda () (interactive) (customize-group 'nix-haskell)) t]
+    ["Show buffer" 'nix-haskell-show-buffer t]))
 
 (define-minor-mode nix-haskell-mode
   "Minor mode for nix-haskell-mode."
