@@ -1,13 +1,56 @@
+#+title: nix-haskell-mode
+#+author: Matthew Bauer
+#+email: mjbauer95@gmail.com
+#+language: en
+#+keywords: nix haskell emacs
+#+html_head: <link rel="stylesheet" href="https://matthewbauer.us/style.css" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+#+link_home: https://github.com/matthewbauer/nix-haskell-mode
+
 * nix-haskell-mode
+
+[[https://melpa.org/#/nix-haskell-mode][file:https://melpa.org/packages/nix-haskell-mode-badge.svg]]
 
 nix-haskell-mode is an easy way to get Haskell projects set up in
 Emacs. It uses haskell-mode’s interactive-haskell-mode to provide
 integration with Emacs. Nix is used to pull in dependencies of each
 Cabal file.
 
-To use with use-package, just add this to your configuration:
+To use with use-package, just add this to your configuration,
 
 #+BEGIN_SRC emacs-lisp
 (use-package nix-haskell-mode
   :hook (haskell-mode . nix-haskell-mode))
 #+END_SRC
+
+nix-haskell-mode is available in MELPA. You can install it yourself
+with =M-x package-install nix-haskell-mode=. Alternative configuration
+for vanilla Emacs is available below,
+
+#+BEGIN_SRC emacs-lisp
+(require 'haskell-mode)
+(require 'nix-haskell-mode)
+(add-hook 'haskell-mode-hook 'nix-haskell-mode
+#+END_SRC
+
+This configuration should work out of the box with Cabal projects. If
+you have custom dependencies that need to be available, you should
+create override in Haskell packages in Nix. More documentation on this
+is available in the Nixpkgs manual available here:
+
+https://nixos.org/nixpkgs/manual/#users-guide-to-the-haskell-infrastructure
+
+** Affected modes
+
+These modes are affected by nix-haskell-mode. They are listed below
+along with what variables are set by nix-haskell-mode.
+
+- Flycheck - sets =flycheck-ghc-package-databases= and
+  =flycheck-haskell-ghc-executable=.
+- Haskell Mode - sets =haskell-process-type= to ='cabal-new-repl=,
+  =haskell-process-path-cabal=, =haskell-process-args-cabal-new-repl=.
+
+** Project information
+
+This project is available at
+http://github.com/matthewbauer/nix-haskell-mode. Pull requests and
+issues are accepted.
