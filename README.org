@@ -29,7 +29,7 @@ for vanilla Emacs is available below,
 #+BEGIN_SRC emacs-lisp
 (require 'haskell-mode)
 (require 'nix-haskell-mode)
-(add-hook 'haskell-mode-hook 'nix-haskell-mode
+(add-hook 'haskell-mode-hook 'nix-haskell-mode)
 #+END_SRC
 
 This configuration should work out of the box with Cabal projects. If
@@ -46,7 +46,7 @@ along with what variables are set by nix-haskell-mode.
 
 - Flycheck - sets =flycheck-ghc-package-databases= and
   =flycheck-haskell-ghc-executable=.
-- Haskell Mode - sets =haskell-process-type= to ='cabal-new-repl=,
+- Haskell Mode - sets =haskell-process-type= to =cabal-new-repl=,
   =haskell-process-path-cabal=, =haskell-process-args-cabal-new-repl=.
 
 ** Project information
@@ -54,3 +54,14 @@ along with what variables are set by nix-haskell-mode.
 This project is available at
 http://github.com/matthewbauer/nix-haskell-mode. Pull requests and
 issues are accepted.
+
+** Disabling nix-haskell-mode for a project
+
+Occasionally you will want to disable nix-haskell-mode. This might
+occur in very large projects where interactive-haskell-mode fails at
+or when some dependency cannot be fetched succesfully. In these cases,
+you should run the following in the root of your project:
+
+=M-x
+add-dir-local-variable<RET>haskell-mode<RET>eval<RET>(nix-haskell-mode
+-1)<RET>=
