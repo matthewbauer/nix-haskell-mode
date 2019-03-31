@@ -478,7 +478,7 @@ DRV derivation file."
   "Keymap for nix-haskell minor mode.")
 
 (easy-menu-define nil nix-haskell-mode-map "nix-haskell-mode menu"
-  '("nix-haskell-mode"
+  '("NixHaskell"
     ["Clear cache" 'nix-haskell-clear-cache t]
     ["Restart" 'nix-haskell-restart t]
     ["Configure..." (lambda () (interactive) (customize-group 'nix-haskell)) t]
