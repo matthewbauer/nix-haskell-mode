@@ -192,8 +192,8 @@ PROC the process that has been run.
 EVENT the event that was fired."
   (pcase event
     ("finished\n"
-     (nix-haskell-interactive buf drv-file drv)
-     (kill-buffer err))
+     (kill-buffer err)
+     (nix-haskell-interactive buf drv-file drv))
     (_
      (display-buffer err)
      (message "Running nix-haskell failed to realise the store path")
