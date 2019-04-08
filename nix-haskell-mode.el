@@ -459,7 +459,10 @@ DRV derivation file."
   (setq nix-haskell-package-db-cache
 	(lax-plist-put nix-haskell-package-db-cache
 		       (nix-haskell-cabal-file) nil))
-  (nix-haskell-get-pkg-db (apply-partially 'nix-haskell-interactive
+  (nix-haskell-get-pkg-db (apply-partially (lambda (buf &rest args)
+					     (apply 'nix-haskell-interactive buf args)
+					     (with-current-buffer buf
+					       (haskell-process-restart)))
 					   (current-buffer))))
 
 (defun nix-haskell-show-buffer ()
