@@ -90,6 +90,9 @@
   :type 'boolean
   :group 'nix-haskell)
 
+;; Prefix to use in the lighters
+(defconst nix-haskell-lighter-prefix " NixH")
+
 ;; Expression used to build Haskell’s package db
 
 ;; We don’t want to just get ghc from the Nix file. This would leave
@@ -174,7 +177,7 @@ in buildPkgDb pkg")
 (defvar-local nix-haskell-package-name nil
   "Stores the package name.")
 
-(defvar-local nix-haskell-status "?"
+(defvar-local nix-haskell-status (concat nix-haskell-lighter-prefix "?")
   "Get the status of nix-haskell buffer.")
 
 (defun nix-haskell-clear-cache ()
@@ -197,7 +200,7 @@ EVENT the event that was fired."
     (_
      (display-buffer err)
      (message "Running nix-haskell failed to realise the store path")
-     (setq nix-haskell-status "!"))))
+     (setq nix-haskell-status (concat nix-haskell-lighter-prefix "!")))))
 
 (defun nix-haskell-instantiate-sentinel (prop err proc event)
   "Make a nix-haskell process.
@@ -227,7 +230,7 @@ EVENT the event that was fired."
     (_
      (display-buffer err)
      (message "Running nix-haskell failed to instantiate")
-     (setq nix-haskell-status "!")))
+     (setq nix-haskell-status (concat nix-haskell-lighter-prefix "!"))))
   (unless (process-live-p proc)
     (kill-buffer (process-buffer proc))))
 
@@ -358,7 +361,7 @@ CALLBACK called once the package-db is determined."
         ;; (when nix-haskell-verbose
         ;;   (message "Running %s." command))
 
-	(setq nix-haskell-status "*")
+	(setq nix-haskell-status (concat nix-haskell-lighter-prefix "*"))
 	(make-process
 	 :name (format "*nix-haskell*<%s>" package-name)
 	 :buffer stdout
@@ -386,7 +389,8 @@ DRV derivation file."
           (message "nix-haskell succeeded in buffer."))
 
 	(with-current-buffer buf
-	  (setq nix-haskell-status (concat "[" (nix-haskell-package-name) "]"))
+	  (setq nix-haskell-status (concat nix-haskell-lighter-prefix
+					   "[" (nix-haskell-package-name) "]"))
 
 	  ;; Find package db directory.
 	  (setq package-db (expand-file-name "lib" package-db))
@@ -438,7 +442,7 @@ DRV derivation file."
     (let ((stderr (generate-new-buffer
 		   (format "*nix-haskell-store<%s>*" (nix-haskell-package-name)))))
       (with-current-buffer buf
-	(setq nix-haskell-status "+")
+	(setq nix-haskell-status (concat nix-haskell-lighter-prefix "+"))
 	(setq nix-haskell-store-stderr stderr))
       (make-process
        :name (format "*nix-haskell-store<%s>*" (nix-haskell-package-name))
@@ -495,21 +499,23 @@ DRV derivation file."
 
 (define-minor-mode nix-haskell-mode
   "Minor mode for nix-haskell-mode."
-  :lighter (:eval (concat " NixH" (nix-haskell-status)))
+  :lighter (:eval (nix-haskell-status))
   :group 'nix-haskell
   :keymap nix-haskell-mode-map
   (if nix-haskell-mode
       (progn
-	(when (nix-haskell-cabal-file)
-	  ;; Disable flycheck and interactive-haskell-mode.
-	  ;; They will be reenabled later.
-	  (when nix-haskell-flycheck
-	    (flycheck-mode -1))
-	  (when nix-haskell-interactive
-	    (interactive-haskell-mode -1))
-	  ;; Need to keep the buffer for after the process has run.
-	  (nix-haskell-get-pkg-db (apply-partially 'nix-haskell-interactive
-						   (current-buffer)))))
+	(if (nix-haskell-cabal-file)
+	    (progn
+	      ;; Disable flycheck and interactive-haskell-mode.
+	      ;; They will be reenabled later.
+	      (when nix-haskell-flycheck
+		(flycheck-mode -1))
+	      (when nix-haskell-interactive
+		(interactive-haskell-mode -1))
+	      ;; Need to keep the buffer for after the process has run.
+	      (nix-haskell-get-pkg-db (apply-partially 'nix-haskell-interactive
+						       (current-buffer))))
+	  (setq nix-haskell-status "")))
     (progn
       ;; Undo changes made
       )))
