@@ -426,6 +426,12 @@ DRV derivation file."
 	  (when nix-haskell-flycheck
 	    (setq-local flycheck-haskell-ghc-executable
 			(expand-file-name "bin/ghc" out))
+	    (setq-local flycheck-haskell-runghc-command
+			(list (expand-file-name "bin/runghc" out) "--" "-i"
+			      "-packageCabal" "-packagebase"
+			      "-packagebytestring" "-packagecontainers"
+			      "-packagedirectory" "-packagefilepath"
+			      "-packageprocess"))
 	    (make-local-variable 'flycheck-ghc-package-databases)
 	    (add-to-list 'flycheck-ghc-package-databases package-db)
 	    (flycheck-mode 1))))
