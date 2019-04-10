@@ -503,10 +503,10 @@ DRV derivation file."
   "Show buffer used in nix-haskell."
   (interactive)
   (cond
-   (nix-haskell-instantiate-stderr
-    (display-buffer nix-haskell-instantiate-stderr))
    (nix-haskell-store-stderr
     (display-buffer nix-haskell-store-stderr))
+   (nix-haskell-instantiate-stderr
+    (display-buffer nix-haskell-instantiate-stderr))
    (t (error "No nix-haskell buffer is active"))))
 
 (defvar nix-haskell-mode-map
