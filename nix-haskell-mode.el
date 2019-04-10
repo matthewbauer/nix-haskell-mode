@@ -103,17 +103,41 @@
 (defvar nix-haskell-pkg-db-expr "{ pkgs ? import <nixpkgs> {}
 , haskellPackages ? pkgs.haskellPackages
 , nixFile ? null, packageName, cabalFile
-, channels ? [\"nixos-18.09\" \"nixos-18.03\" \"nixos-17.09\" \"nixos-17.03\" \"nixos-16.09\"] }: let
+, compilers ? {
+  ghc6104 = (import (builtins.fetchTarball \"channel:nixos-17.09\") {}).haskell.compiler.ghc6104;
+  ghc6121 = (import (builtins.fetchTarball \"channel:nixos-14.04\") {}).pkgs.haskell.packages_ghc6121.ghc;
+  ghc6122 = (import (builtins.fetchTarball \"channel:nixos-14.04\") {}).pkgs.haskell.packages_ghc6122.ghc;
+  ghc6123 = (import (builtins.fetchTarball \"channel:nixos-17.09\") {}).haskell.compiler.ghc6123;
+  ghc701 = (import (builtins.fetchTarball \"channel:nixos-14.04\") {}).pkgs.haskell.packages_ghc701.ghc;
+  ghc702 = (import (builtins.fetchTarball \"channel:nixos-14.04\") {}).pkgs.haskell.packages_ghc702.ghc;
+  ghc703 = (import (builtins.fetchTarball \"channel:nixos-14.04\") {}).pkgs.haskell.packages_ghc703.ghc;
+  ghc704 = (import (builtins.fetchTarball \"channel:nixos-18.03\") {}).haskell.compiler.ghc704;
+  ghc721 = (import (builtins.fetchTarball \"channel:nixos-14.04\") {}).pkgs.haskell.packages_ghc721.ghc;
+  ghc722 = (import (builtins.fetchTarball \"channel:nixos-17.09\") {}).haskell.compiler.ghc722;
+  ghc741 = (import (builtins.fetchTarball \"channel:nixos-14.04\") {}).pkgs.haskell.packages_ghc741.ghc;
+  ghc742 = (import (builtins.fetchTarball \"channel:nixos-18.03\") {}).haskell.compiler.ghc742;
+  ghc761 = (import (builtins.fetchTarball \"channel:nixos-14.04\") {}).pkgs.haskell.packages_ghc761.ghc;
+  ghc762 = (import (builtins.fetchTarball \"channel:nixos-14.04\") {}).pkgs.haskell.packages_ghc762.ghc;
+  ghc763 = (import (builtins.fetchTarball \"channel:nixos-18.03\") {}).haskell.compiler.ghc763;
+  ghc783 = (import (builtins.fetchTarball \"channel:nixos-17.09\") {}).haskell.compiler.ghc783;
+  ghc784 = (import (builtins.fetchTarball \"channel:nixos-18.03\") {}).haskell.compiler.ghc784;
+  ghc7102 = (import (builtins.fetchTarball \"channel:nixos-17.09\") {}).haskell.compiler.ghc7102;
+  ghc7103 = (import (builtins.fetchTarball \"channel:nixos-18.09\") {}).haskell.compiler.ghc7103;
+  ghc801 = (import (builtins.fetchTarball \"channel:nixos-17.09\") {}).haskell.compiler.ghc801;
+  ghc802 = (import (builtins.fetchTarball \"channel:nixos-18.09\") {}).haskell.compiler.ghc802;
+  ghc821 = (import (builtins.fetchTarball \"channel:nixos-17.09\") {}).haskell.compiler.ghc821;
+  ghc822 = (import (builtins.fetchTarball \"channel:nixos-19.03\") {}).haskell.compiler.ghc822;
+  ghc841 = (import (builtins.fetchTarball \"channel:nixos-18.03\") {}).haskell.compiler.ghc841;
+  ghc843 = (import (builtins.fetchTarball \"channel:nixos-18.09\") {}).haskell.compiler.ghc843;
+  ghc844 = (import (builtins.fetchTarball \"channel:nixos-19.03\") {}).haskell.compiler.ghc844;
+  ghc861 = (import (builtins.fetchTarball \"channel:nixos-18.09\") {}).haskell.compiler.ghc861;
+  ghc862 = (import (builtins.fetchTarball \"channel:nixos-18.09\") {}).haskell.compiler.ghc862;
+  ghc863 = (import (builtins.fetchTarball \"channel:nixos-18.09\") {}).haskell.compiler.ghc863;
+  ghc864 = (import (builtins.fetchTarball \"channel:nixos-19.03\") {}).haskell.compiler.ghc864;
+} }: let
   inherit (pkgs) lib;
   getGhc = name: let compilerName = lib.replaceStrings [\".\" \"-\"] [\"\" \"\"] name;
-                     getChannel = channel: import (builtins.fetchTarball \"channel:${channel}\") {};
-                     findNonNull = l: r: if l != null then l
-                                         else if r.haskell.compiler ? ${compilerName}
-                                              then r.haskell.compiler.${compilerName}
-                                         else null;
-                     compiler = builtins.foldl' findNonNull null (map getChannel channels);
-                 in pkgs.haskell.compiler.${compilerName} or (if compiler != null then compiler
-                                                              else throw \"Can’t find compiler for ${compilerName}.\");
+                 in pkgs.haskell.compiler.${compilerName} or compilers.${compilerName} or (throw \"Can’t find haskell compiler ${compilerName}\");
   buildPkgDb = pkg: let
     maybeGhc = if pkg.nativeBuildInputs != [] then builtins.head pkg.nativeBuildInputs else null;
     compiler = if pkg ? compiler then getGhc pkg.compiler.name
