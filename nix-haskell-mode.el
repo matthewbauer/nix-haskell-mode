@@ -423,8 +423,8 @@ DRV derivation file."
 			    package-db))
 	  (setq package-db (expand-file-name "package.conf.d" package-db))
 
-	  ;; (setq-local haskell-compile-cabal-build-command
-	  ;;	      (format "%s new-build" (expand-file-name "bin/cabal" out)))
+	  (setq-local haskell-compile-cabal-build-command
+		      (concat "cd %s && " (expand-file-name "bin/cabal" out) " new-build"))
 
 	  ;; Setup haskell-mode args.
           (setq-local haskell-process-type 'cabal-new-repl)
