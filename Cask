@@ -9,4 +9,5 @@
 
 (depends-on "flycheck")
 (depends-on "haskell-mode")
+(depends-on "flycheck-haskell")
 (depends-on "nix-mode")

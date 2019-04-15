@@ -6,7 +6,7 @@
 ;; Homepage: https://github.com/matthewbauer/nix-haskell
 ;; Keywords: nix, haskell, languages, processes
 ;; Version: 0.0.2
-;; Package-Requires: ((emacs "25") (haskell-mode "16.0") (flycheck "30") (nix-mode "1.3.0"))
+;; Package-Requires: ((emacs "25") (haskell-mode "16.0") (flycheck "30") (nix-mode "1.3.0") (flycheck-haskell "0.6"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -59,7 +59,7 @@
 (require 'nix-store)
 (require 'haskell)
 (require 'flycheck)
-;; (require 'projectile)
+(require 'flycheck-haskell)
 
 (defgroup nix-haskell nil
   "Nix integration with haskell-mode.el"
@@ -261,10 +261,6 @@ EVENT the event that was fired."
 (defun nix-haskell-root ()
   "Get the nix-haskell root."
   (let (root)
-    ;; (when (and (projectile-project-p) (not root)
-    ;;	       (or (file-exists-p (expand-file-name "default.nix" (projectile-project-root)))
-    ;;		   (file-exists-p (expand-file-name "shell.nix" (projectile-project-root)))))
-    ;;   (setq root (projectile-project-root)))
     (unless root
       (setq root (locate-dominating-file default-directory "cabal.project")))
     (unless root
@@ -460,6 +456,7 @@ DRV derivation file."
 			      "-packagebytestring" "-packagecontainers"
 			      "-packagedirectory" "-packagefilepath"
 			      "-packageprocess"))
+	    (flycheck-haskell-setup)
 	    (make-local-variable 'flycheck-ghc-package-databases)
 	    (add-to-list 'flycheck-ghc-package-databases package-db)
 	    (flycheck-mode 1))))
