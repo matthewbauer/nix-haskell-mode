@@ -222,7 +222,7 @@ EVENT the event that was fired."
      (kill-buffer err)
      (nix-haskell-interactive buf drv-file drv))
     (_
-     (display-buffer err)
+     ;; (display-buffer err)
      (message "Running nix-haskell failed to realise the store path")
      (setq nix-haskell-status (concat nix-haskell-lighter-prefix "!")))))
 
@@ -252,7 +252,7 @@ EVENT the event that was fired."
 	   (lax-plist-put nix-haskell-running-processes prop nil))
      (kill-buffer err))
     (_
-     (display-buffer err)
+     ;; (display-buffer err)
      (message "Running nix-haskell failed to instantiate")
      (setq nix-haskell-status (concat nix-haskell-lighter-prefix "!"))))
   (unless (process-live-p proc)
