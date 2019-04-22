@@ -543,6 +543,3 @@ DRV derivation file."
 
 (provide 'nix-haskell-mode)
 ;;; nix-haskell-mode.el ends here
-
-					; LocalWords:  el flycheck async Keymap
-					; LocalWords:  dbs
