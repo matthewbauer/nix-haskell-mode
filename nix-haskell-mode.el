@@ -6,7 +6,7 @@
 ;; Homepage: https://github.com/matthewbauer/nix-haskell
 ;; Keywords: nix, haskell, languages, processes
 ;; Version: 0.0.3
-;; Package-Requires: ((emacs "25") (haskell-mode "16.0") (flycheck "30") (nix-mode "1.3.0") (flycheck-haskell "0.6"))
+;; Package-Requires: ((emacs "25") (haskell-mode "16.0") (nix-mode "1.3.0"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -58,8 +58,6 @@
 (require 'nix-instantiate)
 (require 'nix-store)
 (require 'haskell)
-(require 'flycheck)
-(require 'flycheck-haskell)
 
 (defgroup nix-haskell nil
   "Nix integration with haskell-mode.el"
@@ -75,7 +73,7 @@
   :type 'integer
   :group 'nix-haskell)
 
-(defcustom nix-haskell-flycheck t
+(defcustom nix-haskell-flycheck nil
   "Whether to enable flycheck."
   :type 'boolean
   :group 'nix-haskell)
@@ -394,6 +392,10 @@ CALLBACK called once the package-db is determined."
 	;; Don’t let hooks wait for make-process.
 	t))))
 
+(defvar flycheck-haskell-ghc-executable)
+(defvar flycheck-haskell-runghc-command)
+(defvar flycheck-ghc-package-databases)
+
 (defun nix-haskell-interactive (buf out drv)
   "Setup interactive buffers for nix-haskell.
 
@@ -447,18 +449,21 @@ DRV derivation file."
 		(haskell-process-load-file))))
 
 	  ;; Setup flycheck.
+	  (setq-local flycheck-haskell-ghc-executable
+		      (expand-file-name "bin/ghc" out))
+	  (setq-local flycheck-haskell-runghc-command
+		      (list (expand-file-name "bin/runghc" out) "--" "-i"
+			    "-packageCabal" "-packagebase"
+			    "-packagebytestring" "-packagecontainers"
+			    "-packagedirectory" "-packagefilepath"
+			    "-packageprocess"))
+	  (make-local-variable 'flycheck-ghc-package-databases)
+	  (add-to-list 'flycheck-ghc-package-databases package-db)
+
 	  (when nix-haskell-flycheck
-	    (setq-local flycheck-haskell-ghc-executable
-			(expand-file-name "bin/ghc" out))
-	    (setq-local flycheck-haskell-runghc-command
-			(list (expand-file-name "bin/runghc" out) "--" "-i"
-			      "-packageCabal" "-packagebase"
-			      "-packagebytestring" "-packagecontainers"
-			      "-packagedirectory" "-packagefilepath"
-			      "-packageprocess"))
+	    (require 'flycheck)
+	    (require 'flycheck-haskell)
 	    (flycheck-haskell-setup)
-	    (make-local-variable 'flycheck-ghc-package-databases)
-	    (add-to-list 'flycheck-ghc-package-databases package-db)
 	    (flycheck-mode 1))))
     (let ((stderr (generate-new-buffer
 		   (format "*nix-haskell-store<%s>*" (nix-haskell-package-name)))))
@@ -529,9 +534,9 @@ DRV derivation file."
 	    (progn
 	      ;; Disable flycheck and interactive-haskell-mode.
 	      ;; They will be reenabled later.
-	      (when nix-haskell-flycheck
+	      (when (and nix-haskell-flycheck (fboundp 'flycheck-mode))
 		(flycheck-mode -1))
-	      (when nix-haskell-interactive
+	      (when (and nix-haskell-interactive (fboundp 'interactive-haskell-mode))
 		(interactive-haskell-mode -1))
 	      ;; Need to keep the buffer for after the process has run.
 	      (nix-haskell-get-pkg-db (apply-partially 'nix-haskell-interactive
