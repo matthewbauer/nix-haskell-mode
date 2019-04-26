@@ -290,8 +290,10 @@ EVENT the event that was fired."
       (setq nix-file (expand-file-name "default.nix" root)))
     (when (and nix-file (file-exists-p nix-file)) nix-file)))
 
-(defvar-local nix-haskell-instantiate-stderr nil)
-(defvar-local nix-haskell-store-stderr nil)
+(defvar-local nix-haskell-instantiate-stderr nil
+  "Store stderr buffer")
+(defvar-local nix-haskell-store-stderr nil
+  "Store stderr buferr")
 
 (defun nix-haskell-get-pkg-db (callback)
   "Get a package-db async.
