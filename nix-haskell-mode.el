@@ -259,14 +259,11 @@ EVENT the event that was fired."
 (defun nix-haskell-root ()
   "Get the nix-haskell root."
   (let (root)
-    (unless root
-      (setq root (locate-dominating-file default-directory "cabal.project")))
-    (unless root
-      (setq root (locate-dominating-file default-directory "default.nix")))
-    (unless root
-      (setq root (locate-dominating-file default-directory "shell.nix")))
-    (unless root
-      (setq root (file-name-directory (nix-haskell-cabal-file))))
+    (or
+     (setq root (locate-dominating-file default-directory "cabal.project"))
+     (setq root (locate-dominating-file default-directory "default.nix"))
+     (setq root (locate-dominating-file default-directory "shell.nix"))
+     (setq root (file-name-directory (nix-haskell-cabal-file))))
     (when root
       (setq root (expand-file-name root)))
     root))
