@@ -6,8 +6,6 @@
 #+html_head: <link rel="stylesheet" href="https://matthewbauer.us/style.css" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 #+link_home: https://github.com/matthewbauer/nix-haskell-mode
 
-* nix-haskell-mode
-
 [[https://melpa.org/#/nix-haskell-mode][file:https://melpa.org/packages/nix-haskell-mode-badge.svg]]
 
 nix-haskell-mode is an easy way to get Haskell projects set up in
@@ -39,7 +37,7 @@ is available in the Nixpkgs manual available here:
 
 https://nixos.org/nixpkgs/manual/#users-guide-to-the-haskell-infrastructure
 
-** Affected modes
+* Affected modes
 
 These modes are affected by nix-haskell-mode. They are listed below
 along with what variables are set by nix-haskell-mode.
@@ -49,13 +47,13 @@ along with what variables are set by nix-haskell-mode.
 - Haskell Mode - sets =haskell-process-type= to =cabal-new-repl=,
   =haskell-process-path-cabal=, =haskell-process-args-cabal-new-repl=.
 
-** Project information
+* Project information
 
 This project is available at
 http://github.com/matthewbauer/nix-haskell-mode. Pull requests and
 issues are accepted.
 
-** Disabling nix-haskell-mode for a project
+* Disabling nix-haskell-mode for a project
 
 Occasionally you will want to disable nix-haskell-mode. This might
 occur in very large projects where interactive-haskell-mode fails at
