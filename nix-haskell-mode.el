@@ -517,10 +517,14 @@ DRV derivation file."
 
 (easy-menu-define nil nix-haskell-mode-map "nix-haskell-mode menu"
   '("NixHaskell"
-    ["Clear cache" nix-haskell-clear-cache t]
-    ["Restart" nix-haskell-restart t]
-    ["Configure..." (lambda () (interactive) (customize-group 'nix-haskell)) t]
-    ["Show buffer" nix-haskell-show-buffer t]))
+    ["Clear cache" nix-haskell-clear-cache
+     :help "Clear the nix-haskell-mode cache."]
+    ["Restart" nix-haskell-restart
+     :help "Restart the nix-haskell-mode process."]
+    ["Configure..." (lambda () (interactive) (customize-group 'nix-haskell))
+     :help "Customize nix-haskell-mode settings."]
+    ["Show buffer" nix-haskell-show-buffer
+     :help "Show the buffer used to download the Nix dependencies."]))
 
 (define-minor-mode nix-haskell-mode
   "Minor mode for nix-haskell-mode."
