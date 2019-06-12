@@ -497,7 +497,10 @@ DRV derivation file."
   (nix-haskell-get-pkg-db (apply-partially (lambda (buf &rest args)
 					     (apply 'nix-haskell-interactive buf args)
 					     (with-current-buffer buf
-					       (haskell-process-restart)))
+					       (haskell-process-restart)
+					       (haskell-process-load-file))
+					     ;; TODO: restart all haskell buffers!
+					     )
 					   (current-buffer))))
 
 (defun nix-haskell-show-buffer ()
