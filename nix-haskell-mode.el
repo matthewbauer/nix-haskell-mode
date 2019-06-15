@@ -207,6 +207,12 @@ in buildPkgDb pkg")
   (interactive)
   (setq nix-haskell-package-db-cache nil))
 
+(defun nix-haskell-message (str)
+  "Messaging appropriate in nix-haskell async processes.
+STR message to send to minibuffer"
+  (unless (active-minibuffer-window)
+    (message "%s" str)))
+
 (defun nix-haskell-store-sentinel (err buf drv-file drv _ event)
   "Make a nix-haskell process.
 ERR the error buffer.
@@ -221,7 +227,7 @@ EVENT the event that was fired."
      (nix-haskell-interactive buf drv-file drv))
     (_
      ;; (display-buffer err)
-     (nix-haskell-mode-message-line "Running nix-haskell failed to realise the store path")
+     (nix-haskell-message "Running nix-haskell failed to realise the store path")
      (setq nix-haskell-status (concat nix-haskell-lighter-prefix "!")))))
 
 (defun nix-haskell-instantiate-sentinel (prop err proc event)
@@ -251,7 +257,7 @@ EVENT the event that was fired."
      (kill-buffer err))
     (_
      ;; (display-buffer err)
-     (nix-haskell-mode-message-line "Running nix-haskell failed to instantiate")
+     (nix-haskell-message "Running nix-haskell failed to instantiate")
      (setq nix-haskell-status (concat nix-haskell-lighter-prefix "!"))))
   (unless (process-live-p proc)
     (kill-buffer (process-buffer proc))))
@@ -322,11 +328,11 @@ CALLBACK called once the package-db is determined."
 		    "--argstr" "packageName" package-name)))
 
         (when nix-haskell-verbose
-          (nix-haskell-mode-message-line "Running nix-instantiate for %s..." cabal-file))
+          (nix-haskell-message (format "Running nix-instantiate for %s..." cabal-file)))
 
         (when nix-file
           (when nix-haskell-verbose
-	    (nix-haskell-mode-message-line "Found Nix file at %s." nix-file))
+	    (nix-haskell-message (format "Found Nix file at %s." nix-file)))
           (setq command
                 (append command (list "--argstr" "nixFile" nix-file))))
 
@@ -337,7 +343,7 @@ CALLBACK called once the package-db is determined."
          ((file-exists-p (expand-file-name "reflex-platform.nix" root))
 
           (when nix-haskell-verbose
-            (nix-haskell-mode-message-line "Detected reflex-platform project."))
+            (nix-haskell-message "Detected reflex-platform project."))
 
 	  (setq command
 		(append command
@@ -349,20 +355,20 @@ CALLBACK called once the package-db is determined."
          ((file-exists-p (expand-file-name ".obelisk/impl/default.nix" root))
 
           (when nix-haskell-verbose
-            (nix-haskell-mode-message-line "Detected obelisk project."))
+            (nix-haskell-message "Detected obelisk project."))
 
 	  (setq command
 		(append command
 			(list "--arg" "haskellPackages"
 			      (format "(import %s {}).haskellPackageSets.ghc"
-				      (expand-file-name ".obelisk/impl/default.nix"
-							root))))))
+				      (expand-file-name
+				       ".obelisk/impl/default.nix" root))))))
 
          ;; ((and (file-exists-p (expand-file-name "default.nix" root))
          ;;       (not (string= (expand-file-name "default.nix" root)
          ;;                     nix-file)))
          ;;  (when nix-haskell-verbose
-         ;;    (nix-haskell-mode-message-line "Detected default.nix."))
+         ;;    (nix-haskell-message "Detected default.nix."))
 	 ;;  (setq command
 	 ;;        (append command
 	 ;;             (list "--arg" "haskellPackages"
@@ -376,7 +382,7 @@ CALLBACK called once the package-db is determined."
 			     cabal-file (cons callback data)))
 
         ;; (when nix-haskell-verbose
-        ;;   (nix-haskell-mode-message-line "Running %s." command))
+        ;;   (nix-haskell-message (format "Running %s." command)))
 
 	(setq nix-haskell-status (concat nix-haskell-lighter-prefix "*"))
 	(make-process
@@ -407,7 +413,7 @@ DRV derivation file."
       (let ((package-db out))
 
         (when nix-haskell-verbose
-          (nix-haskell-mode-message-line "nix-haskell succeeded in buffer."))
+          (nix-haskell-message "nix-haskell succeeded in buffer."))
 
 	(with-current-buffer buf
 	  (setq nix-haskell-status (concat nix-haskell-lighter-prefix
